@@ -1,33 +1,72 @@
 import '../../global.css';
 import { Tabs } from 'expo-router';
-import { ImageBackground, Image, Text, View } from 'react-native';
+import { ImageBackground, Image, View, ViewStyle } from 'react-native';
 import { images } from '../../constants/images';
 import { icons } from '../../constants/icons';
-
+import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
+import { Text } from '@/components/ui/Text';
 
 function TabIcon({ focused, icon, title }: any) {
+  const { colors } = useTheme();
+
   if (focused) {
     return (
-      <ImageBackground
-        source={images.highlight}
-        className="flex flex-row w-full flex-1 min-w-[112px] min-h-16 mt-4 justify-center items-center rounded-full overflow-hidden"
+      <View
+        className="flex flex-row w-full flex-1 min-w-[112px] min-h-12 mt-4 justify-center items-center rounded-full overflow-hidden"
+        style={{
+          backgroundColor: colors.primary,
+          shadowColor: colors.shadow,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+          elevation: 4,
+        }}
       >
-        <Image source={icon} tintColor="#151312" className="size-5" />
-        <Text className="text-secondary text-base font-semibold ml-2">
+        <Image source={icon} tintColor="#FFFFFF" className="size-5" />
+        <Text
+          weight="semibold"
+          size="sm"
+          className="ml-2"
+          style={{ color: '#FFFFFF' }}
+        >
           {title}
         </Text>
-      </ImageBackground>
+      </View>
     );
   }
 
   return (
     <View className="size-full justify-center items-center mt-4 rounded-full">
-      <Image source={icon} tintColor="#A8B5DB" className="size-5" />
+      <Image
+        source={icon}
+        tintColor={colors.textTertiary}
+        className="size-5"
+      />
     </View>
   );
 }
 
-export default function TabsLayout() {
+function TabsContent() {
+  const { colors } = useTheme();
+
+  const tabBarStyle: ViewStyle = {
+    backgroundColor: colors.glass,
+    borderRadius: 28,
+    marginHorizontal: 20,
+    marginBottom: 36,
+    height: 64,
+    position: "absolute",
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: colors.borderSecondary,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 8,
+    backdropFilter: 'blur(20px)',
+  };
+
   return (
     <Tabs
       screenOptions={{
@@ -38,23 +77,13 @@ export default function TabsLayout() {
           justifyContent: "center",
           alignItems: "center",
         },
-        tabBarStyle: {
-          backgroundColor: "#0F0D23",
-          borderRadius: 50,
-          marginHorizontal: 20,
-          marginBottom: 36,
-          height: 52,
-          position: "absolute",
-          overflow: "hidden",
-          borderWidth: 1,
-          borderColor: "#0F0D23",
-        },
+        tabBarStyle,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "index",
+          title: "Home",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
             <TabIcon focused={focused} icon={icons.home} title="Home" />
@@ -76,10 +105,10 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="save"
         options={{
-          title: "Save",
+          title: "Saved",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.save} title="Save" />
+            <TabIcon focused={focused} icon={icons.save} title="Saved" />
           ),
         }}
       />
@@ -95,5 +124,13 @@ export default function TabsLayout() {
         }}
       />
     </Tabs>
+  );
+}
+
+export default function TabsLayout() {
+  return (
+    <ThemeProvider>
+      <TabsContent />
+    </ThemeProvider>
   );
 }
